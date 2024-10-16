@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 token = os.environ["token"]
 headers = {'Authorization': 'token ' + token}
@@ -20,12 +21,21 @@ if __name__ == "__main__":
     if user_repos:
         for repo in user_repos:
             print(repo["name"])
-            url = f"{base_url}/repos/{username}/{repo['name']}/commits"
+            url = f"{base_url}/repos/{username}/{repo['name']}/commits?since=2023-10-01&until=2023-11-01"
             print(url)
             commits = requests.get(url, headers=headers)
-            for commit in commits:
+            for commit in commits.json():
                 print(commit)
                 print()
+
+                commit_url = f"{base_url}/repos/{username}/{repo['name']}/commits/{commit['sha']}"
+                print(commit_url)
+                commit_info = requests.get(commit_url, headers=headers)
+                print(commit["commit"]["author"]["date"])
+                for file in commit_info.json()["files"]:
+                    print(file["filename"])
+                    print(file["additions"])
+                    print(file["deletions"])
                 break
             print()
             break
