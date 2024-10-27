@@ -1,6 +1,13 @@
+from dataclasses import dataclass
+from datetime import datetime
 import os
 import requests
-import json
+
+@dataclass
+class CommitFile:
+    datetime: datetime
+    filename: str
+    additions: int
 
 token = os.environ["token"]
 headers = {'Authorization': 'token ' + token}
@@ -18,26 +25,21 @@ def get_user_repos(username):
 if __name__ == "__main__":    
     username = "twarsop" # github username
     user_repos = get_user_repos(username)
+
+    commit_files = []
+
     if user_repos:
         for repo in user_repos:
-            print(repo["name"])
             url = f"{base_url}/repos/{username}/{repo['name']}/commits?since=2023-10-01&until=2023-11-01"
-            print(url)
             commits = requests.get(url, headers=headers)
             for commit in commits.json():
-                print(commit)
-                print()
-
                 commit_url = f"{base_url}/repos/{username}/{repo['name']}/commits/{commit['sha']}"
-                print(commit_url)
                 commit_info = requests.get(commit_url, headers=headers)
-                print(commit["commit"]["author"]["date"])
                 for file in commit_info.json()["files"]:
-                    print(file["filename"])
-                    print(file["additions"])
-                    print(file["deletions"])
+                    commit_files.append(CommitFile(datetime=commit["commit"]["author"]["date"], filename=file["filename"], additions=file["additions"]))
                 break
-            print()
             break
     else:
         print(f"Failed to retrieve repositories.")
+
+    print(commit_files)
