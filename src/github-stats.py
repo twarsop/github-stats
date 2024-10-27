@@ -3,19 +3,18 @@ from datetime import datetime
 import os
 import requests
 
+HEADERS = {"Authorization": "token " + os.environ["token"]}
+GITHUB_API_BASE_URL = "https://api.github.com"
+
 @dataclass
 class CommitFile:
     datetime: datetime
     filename: str
     additions: int
 
-token = os.environ["token"]
-headers = {'Authorization': 'token ' + token}
-base_url = "https://api.github.com"
-
 def get_user_repos(username):
-    url = f"{base_url}/users/{username}/repos"
-    response = requests.get(url, headers=headers)
+    url = f"{GITHUB_API_BASE_URL}/users/{username}/repos"
+    response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         repositories_data = response.json()
         return repositories_data
@@ -23,18 +22,18 @@ def get_user_repos(username):
         return None
 
 if __name__ == "__main__":    
-    username = "twarsop" # github username
+    username = "twarsop"
     user_repos = get_user_repos(username)
 
     commit_files = []
 
     if user_repos:
         for repo in user_repos:
-            url = f"{base_url}/repos/{username}/{repo['name']}/commits?since=2023-10-01&until=2023-11-01"
-            commits = requests.get(url, headers=headers)
+            url = f"{GITHUB_API_BASE_URL}/repos/{username}/{repo['name']}/commits?since=2023-10-01&until=2023-11-01"
+            commits = requests.get(url, headers=HEADERS)
             for commit in commits.json():
-                commit_url = f"{base_url}/repos/{username}/{repo['name']}/commits/{commit['sha']}"
-                commit_info = requests.get(commit_url, headers=headers)
+                commit_url = f"{GITHUB_API_BASE_URL}/repos/{username}/{repo['name']}/commits/{commit['sha']}"
+                commit_info = requests.get(commit_url, headers=HEADERS)
                 for file in commit_info.json()["files"]:
                     commit_files.append(CommitFile(datetime=commit["commit"]["author"]["date"], filename=file["filename"], additions=file["additions"]))
                 break
