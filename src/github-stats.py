@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import requests
 
-HEADERS = {"Authorization": "token " + os.environ["token"]}
+HEADERS = {"Authorization": f"token {os.environ['token']}"}
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 @dataclass
@@ -46,6 +46,6 @@ if __name__ == "__main__":
             commit_files += get_user_repo_commit_files(username, repo)
             break
     else:
-        print(f"Failed to retrieve repositories.")
+        print("Failed to retrieve repositories.")
 
     print(commit_files)
