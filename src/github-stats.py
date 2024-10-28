@@ -1,3 +1,4 @@
+import argparse
 from dataclasses import dataclass
 from datetime import datetime
 import os
@@ -43,6 +44,12 @@ def get_commit_files(github_username, commits_since_date, commits_until_date):
     
 
 if __name__ == "__main__":    
-    commit_files = get_commit_files("twarsop", "2023-10-01", "2023-11-01")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--github_username", type=str, required=True)
+    parser.add_argument("-s", "--commits_since_date", type=str, required=True)
+    parser.add_argument("-t", "--commits_until_date", type=str, required=True)
+    args = parser.parse_args()
+
+    commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
 
     print(commit_files)
