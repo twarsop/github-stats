@@ -16,32 +16,29 @@ class CommitFile:
 def get_commit_files(github_username, commits_since_date, commits_until_date):
     commit_files = []
     
-    repositories_data = None
+    repositories_json = get_github_json(f"users/{github_username}/repos")
     
-    url = f"{GITHUB_API_BASE_URL}/users/{github_username}/repos"
-    response = requests.get(url, headers=HEADERS)
-    if response.status_code == 200:
-        repositories_data = response.json()
-    else:
-        return None
-    
-    if repositories_data:
-        for repo in repositories_data:
-            url = f"{GITHUB_API_BASE_URL}/repos/{github_username}/{repo['name']}/commits?since={commits_since_date}&until={commits_until_date}"
-            commits = requests.get(url, headers=HEADERS)
-            for commit in commits.json():
-                commit_url = f"{GITHUB_API_BASE_URL}/repos/{github_username}/{repo['name']}/commits/{commit['sha']}"
-                commit_info = requests.get(commit_url, headers=HEADERS)
-                for file in commit_info.json()["files"]:
-                    commit_files.append(CommitFile(datetime=commit["commit"]["author"]["date"], filename=file["filename"], additions=file["additions"]))
-                break
-
+    if repositories_json:
+        for repo in repositories_json:
+            commits_json = get_github_json(f"repos/{github_username}/{repo['name']}/commits?since={commits_since_date}&until={commits_until_date}")
+            if commits_json:
+                for commit in commits_json:
+                    commit_json = get_github_json(f"repos/{github_username}/{repo['name']}/commits/{commit['sha']}")
+                    if commit_json:
+                        for file in commit_json["files"]:
+                            commit_files.append(CommitFile(datetime=commit["commit"]["author"]["date"], filename=file["filename"], additions=file["additions"]))
+                        break
             break
-    else:
-        print("Failed to retrieve repositories.")
 
     return commit_files
     
+def get_github_json(endpoint):
+    url = f"{GITHUB_API_BASE_URL}/{endpoint}"
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
 
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()
