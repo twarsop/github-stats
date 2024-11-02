@@ -13,6 +13,16 @@ class CommitFile:
     filename: str
     additions: int
 
+@dataclass
+class FilenameToLanguage:
+    index: int
+    filename_part: str
+    language: str
+
+filename_to_language_map = []
+filename_to_language_map.append(FilenameToLanguage(0, "Dockerfile", "Dockerfile"))
+filename_to_language_map.append(FilenameToLanguage(1, "md", "Markdown"))
+
 def get_commit_files(github_username, commits_since_date, commits_until_date):
     commit_files = []
     
@@ -49,4 +59,21 @@ if __name__ == "__main__":
 
     commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
 
-    print(commit_files)
+    language_additions = dict()
+
+    for commit_file in commit_files:
+        split_filename = commit_file.filename.split(".")
+        filename_to_language_match = None
+        for filename_to_language in filename_to_language_map:
+            if filename_to_language.index < len(split_filename) and split_filename[filename_to_language.index] == filename_to_language.filename_part:
+                filename_to_language_match = filename_to_language.language
+        
+        if filename_to_language_match is None:
+            raise(f"No language match for filename: {commit_file.filename}")
+
+        if filename_to_language_match not in language_additions:
+            language_additions[filename_to_language_match] = 0
+
+        language_additions[filename_to_language_match] += commit_file.additions
+
+    print(language_additions)
