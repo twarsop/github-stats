@@ -13,16 +13,6 @@ class CommitFile:
     filename: str
     additions: int
 
-@dataclass
-class FilenameToLanguage:
-    index: int
-    filename_part: str
-    language: str
-
-filename_to_language_map = []
-filename_to_language_map.append(FilenameToLanguage(0, "Dockerfile", "Dockerfile"))
-filename_to_language_map.append(FilenameToLanguage(1, "md", "Markdown"))
-
 def get_commit_files(github_username, commits_since_date, commits_until_date):
     commit_files = []
     
@@ -49,16 +39,18 @@ def get_github_json(endpoint):
         return response.json()
     else:
         return None
+    
+@dataclass
+class FilenameToLanguage:
+    index: int
+    filename_part: str
+    language: str
 
-if __name__ == "__main__":    
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--github_username", type=str, required=True)
-    parser.add_argument("-s", "--commits_since_date", type=str, required=True)
-    parser.add_argument("-t", "--commits_until_date", type=str, required=True)
-    args = parser.parse_args()
+filename_to_language_map = []
+filename_to_language_map.append(FilenameToLanguage(0, "Dockerfile", "Dockerfile"))
+filename_to_language_map.append(FilenameToLanguage(1, "md", "Markdown"))
 
-    commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
-
+def calculate_yearly_language_additions(commit_files):
     yearly_language_additions = dict()
 
     for commit_file in commit_files:
@@ -79,4 +71,17 @@ if __name__ == "__main__":
 
         yearly_language_additions[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
 
+    return yearly_language_additions
+
+if __name__ == "__main__":    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--github_username", type=str, required=True)
+    parser.add_argument("-s", "--commits_since_date", type=str, required=True)
+    parser.add_argument("-t", "--commits_until_date", type=str, required=True)
+    args = parser.parse_args()
+
+    commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
+
+    yearly_language_additions = calculate_yearly_language_additions(commit_files)
+    
     print(yearly_language_additions)
