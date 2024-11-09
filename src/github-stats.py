@@ -6,6 +6,7 @@ from typing import List
 import json
 from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
+from decimal import Decimal
 
 HEADERS = {"Authorization": f"token {os.environ['token']}"}
 GITHUB_API_BASE_URL = "https://api.github.com"
@@ -95,6 +96,32 @@ def group_yearly_language_additions(commit_files):
 
     return yearly_language_additions
 
+@dataclass
+class LanguageStats:
+    language: str
+    additions: int
+    percentage: Decimal
+
+@dataclass
+class YearlyLanguageStats:
+    year: int
+    total_additions: int
+    language_stats: List[LanguageStats]
+
+def calculate_yearly_language_stats(yearly_language_additions):
+    yearly_language_stats = []
+
+    for year in yearly_language_additions:
+        total_additions = sum([x.additions for x in year.language_additions])
+        yearly_language_stat = YearlyLanguageStats(year=year.year, total_additions=total_additions, language_stats=[])
+
+        for yearly_language_addition in year.language_additions:
+            yearly_language_stat.language_stats.append(LanguageStats(language=yearly_language_addition.language, additions=yearly_language_addition.additions, percentage=(yearly_language_addition.additions/total_additions)*100))
+
+        yearly_language_stats.append(yearly_language_stat)
+
+    return yearly_language_stats
+
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--github_username", type=str, required=True)
@@ -106,4 +133,6 @@ if __name__ == "__main__":
 
     yearly_language_additions = group_yearly_language_additions(commit_files)
 
-    print(json.dumps(yearly_language_additions, indent=4, default=pydantic_encoder))
+    yearly_language_stats = calculate_yearly_language_stats(yearly_language_additions)
+
+    print(json.dumps(yearly_language_stats, indent=4, default=pydantic_encoder))
