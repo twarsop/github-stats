@@ -1,8 +1,11 @@
 import argparse
-from dataclasses import dataclass
 from datetime import datetime
 import os
 import requests
+from typing import List
+import json
+from pydantic.dataclasses import dataclass
+from pydantic.json import pydantic_encoder
 
 HEADERS = {"Authorization": f"token {os.environ['token']}"}
 GITHUB_API_BASE_URL = "https://api.github.com"
@@ -50,12 +53,22 @@ filename_to_language_map = []
 filename_to_language_map.append(FilenameToLanguage(0, "Dockerfile", "Dockerfile"))
 filename_to_language_map.append(FilenameToLanguage(1, "md", "Markdown"))
 
-def calculate_yearly_language_additions(commit_files):
-    yearly_language_additions = dict()
+@dataclass
+class LanguageAddition:
+    language: str
+    additions: int
+
+@dataclass
+class YearlyLanguageAddition:
+    year: int
+    language_additions: List[LanguageAddition]
+
+def group_yearly_language_additions(commit_files):
+    yearly_language_additions_dict = dict()
 
     for commit_file in commit_files:
-        if commit_file.datetime.year not in yearly_language_additions:
-            yearly_language_additions[commit_file.datetime.year] = dict()
+        if commit_file.datetime.year not in yearly_language_additions_dict:
+            yearly_language_additions_dict[commit_file.datetime.year] = dict()
 
         split_filename = commit_file.filename.split(".")
         filename_to_language_match = None
@@ -66,10 +79,21 @@ def calculate_yearly_language_additions(commit_files):
         if filename_to_language_match is None:
             raise(f"No language match for filename: {commit_file.filename}")
 
-        if filename_to_language_match not in yearly_language_additions[commit_file.datetime.year]:
-            yearly_language_additions[commit_file.datetime.year][filename_to_language_match] = 0
+        if filename_to_language_match not in yearly_language_additions_dict[commit_file.datetime.year]:
+            yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] = 0
 
-        yearly_language_additions[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
+        yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
+
+    print(yearly_language_additions_dict)
+
+    yearly_language_additions = []
+
+    for year in yearly_language_additions_dict:
+        yearly_language_addition = YearlyLanguageAddition(year=year, language_additions=[])
+        for language in yearly_language_additions_dict[year]:
+            yearly_language_addition.language_additions.append(LanguageAddition(language=language, additions=yearly_language_additions_dict[year][language]))
+        
+        yearly_language_additions.append(yearly_language_addition)
 
     return yearly_language_additions
 
@@ -82,6 +106,8 @@ if __name__ == "__main__":
 
     commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
 
-    yearly_language_additions = calculate_yearly_language_additions(commit_files)
-    
-    print(yearly_language_additions)
+    print(commit_files)
+
+    yearly_language_additions = group_yearly_language_additions(commit_files)
+
+    print(json.dumps(yearly_language_additions, default=pydantic_encoder))
