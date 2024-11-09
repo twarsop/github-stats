@@ -84,8 +84,6 @@ def group_yearly_language_additions(commit_files):
 
         yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
 
-    print(yearly_language_additions_dict)
-
     yearly_language_additions = []
 
     for year in yearly_language_additions_dict:
@@ -106,8 +104,6 @@ if __name__ == "__main__":
 
     commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
 
-    print(commit_files)
-
     yearly_language_additions = group_yearly_language_additions(commit_files)
 
-    print(json.dumps(yearly_language_additions, default=pydantic_encoder))
+    print(json.dumps(yearly_language_additions, indent=4, default=pydantic_encoder))
