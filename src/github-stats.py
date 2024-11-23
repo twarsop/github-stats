@@ -1,3 +1,16 @@
+# Todo:
+# finish updating lists
+# rename filename_to_language_map to file_extension
+# split into files
+# unit tests
+# instructions in readme
+
+# Done:
+# updated filename to language map to dictionary
+# added ignore list and updated file extensions supported
+# order the output in descending order
+# gets private repos
+
 import argparse
 from datetime import datetime
 import os
@@ -20,10 +33,10 @@ class CommitFile:
 def get_commit_files(github_username, commits_since_date, commits_until_date):
     commit_files = []
     
-    repositories_json = get_github_json(f"users/{github_username}/repos")
-    
+    repositories_json = get_github_json(f"search/repositories?q=user:twarsop")
+
     if repositories_json:
-        for repo in repositories_json:
+        for repo in repositories_json["items"]:
             commits_json = get_github_json(f"repos/{github_username}/{repo['name']}/commits?since={commits_since_date}&until={commits_until_date}")
             if commits_json:
                 for commit in commits_json:
@@ -31,28 +44,128 @@ def get_commit_files(github_username, commits_since_date, commits_until_date):
                     if commit_json:
                         for file in commit_json["files"]:
                             commit_files.append(CommitFile(datetime=datetime.strptime(commit["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ'), filename=file["filename"], additions=file["additions"]))
-                        break
-            break
 
     return commit_files
     
 def get_github_json(endpoint):
     url = f"{GITHUB_API_BASE_URL}/{endpoint}"
-    response = requests.get(url, headers=HEADERS)
+    response = requests.get(url, headers=HEADERS, params={"username": "twarsop"})
     if response.status_code == 200:
         return response.json()
     else:
         return None
     
-@dataclass
-class FilenameToLanguage:
-    index: int
-    filename_part: str
-    language: str
+filename_to_language_map = dict()
+filename_to_language_map["cs"] = "C#"
+filename_to_language_map["cshtml"] = "CSHTML"
+filename_to_language_map["css"] = "CSS"
+filename_to_language_map["Dockerfile"] = "Dockerfile"
+filename_to_language_map["html"] = "HTML"
+filename_to_language_map["ipynb"] = "Jupyter Notebook"
+filename_to_language_map["js"] = "JS"
+filename_to_language_map["Makefile"] = "Makefile"
+filename_to_language_map["md"] = "Markdown"
+filename_to_language_map["py"] = "Python"
+filename_to_language_map["sql"] = "SQL"
+filename_to_language_map["yml"] = "YML"
 
-filename_to_language_map = []
-filename_to_language_map.append(FilenameToLanguage(0, "Dockerfile", "Dockerfile"))
-filename_to_language_map.append(FilenameToLanguage(1, "md", "Markdown"))
+file_extensions_to_ignore = [
+    "0/apphost",
+    "0/calendar-football",
+    "1",
+    "10",
+    "12",
+    "asm",
+    "bin",
+    "build/lambdas/prod/zips/get_fixutres_html/bin/normalizer",
+    "build/lambdas/prod/zips/get_fixtures_html/bin/normalizer",
+    "build/lambdas/prod/zips/get_fixutres_html_og/bin/normalizer",
+    "BuildWithSkipAnalyzers",
+    "c",
+    "cache",
+    "csproj",
+    "cmd",
+    "cnf",
+    "csh",
+    "db",
+    "db-shm",
+    "db-wal",
+    "deb",
+    "dist-info/AUTHORS",
+    "dist-info/INSTALLER",
+    "dist-info/LICENSE",
+    "dist-info/licenses/AUTHORS",
+    "dist-info/licenses/LICENSE",
+    "dist-info/METADATA",
+    "dist-info/NOTICE",
+    "dist-info/RECORD",
+    "dist-info/REQUESTED",
+    "dist-info/WHEEL",
+    "dockerignore",
+    "dll",
+    "drawio",
+    "DS_Store",
+    "dylib",
+    "editorconfig",
+    "enc",
+    "exe",
+    "fish",
+    "gitkeep",
+    "gitignore",
+    "gz",
+    "h",
+    "obj",
+    "ico",
+    "Identifier",
+    "j2",
+    "jpg",
+    "json",
+    "lambdas/build/get_raw_fixtures_and_parse_json/bin/normalizer",
+    "lambdas/prod/zips/get_fixutres_html/bin/normalizer",
+    "lock",
+    "log",
+    "map",
+    "Pipfile",
+    "pdb",
+    "pdf",
+    "pdn",
+    "pem",
+    "png",
+    "props",
+    "ps1",
+    "PSF",
+    "pth",
+    "pyc",
+    "pyi",
+    "rst",
+    "sh",
+    "sln",
+    "so",
+    "src/wwwroot/lib/bootstrap/LICENSE",
+    "suo",
+    "svg",
+    "targets",
+    "testcase",
+    "txt",
+    "typed",
+    "user",
+    "v2",
+    "venv/bin/activate",
+    "venv/bin/chardetect",
+    "venv/bin/dotenv",
+    "venv/bin/normalizer",
+    "venv/bin/pip",
+    "venv/bin/pip3",
+    "venv/bin/playwright",
+    "venv/bin/python",
+    "venv/bin/python3",
+    "venv/bin/tqdm",
+    "vsidx",
+    "webmanifest",
+    "wwwroot/lib/bootstrap/LICENSE",
+    "xcf",
+    "xml",
+    "zip"]
 
 @dataclass
 class LanguageAddition:
@@ -72,18 +185,21 @@ def group_yearly_language_additions(commit_files):
             yearly_language_additions_dict[commit_file.datetime.year] = dict()
 
         split_filename = commit_file.filename.split(".")
-        filename_to_language_match = None
-        for filename_to_language in filename_to_language_map:
-            if filename_to_language.index < len(split_filename) and split_filename[filename_to_language.index] == filename_to_language.filename_part:
-                filename_to_language_match = filename_to_language.language
-        
-        if filename_to_language_match is None:
-            raise(f"No language match for filename: {commit_file.filename}")
 
-        if filename_to_language_match not in yearly_language_additions_dict[commit_file.datetime.year]:
-            yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] = 0
+        if split_filename[-1] not in file_extensions_to_ignore:
+            filename_to_language_match = None
+            for filename, language in filename_to_language_map.items():
+                if split_filename[-1] == filename:
+                    filename_to_language_match = language
+            
+            if filename_to_language_match is None:
+                print(f"Encountered unknown file extension: {split_filename[-1]} in filename: {commit_file.filename}")
 
-        yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
+            if filename_to_language_match:
+                if filename_to_language_match not in yearly_language_additions_dict[commit_file.datetime.year]:
+                    yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] = 0
+
+                yearly_language_additions_dict[commit_file.datetime.year][filename_to_language_match] += commit_file.additions
 
     yearly_language_additions = []
 
@@ -119,6 +235,9 @@ def calculate_yearly_language_stats(yearly_language_additions):
             yearly_language_stat.language_stats.append(LanguageStats(language=yearly_language_addition.language, additions=yearly_language_addition.additions, percentage=(yearly_language_addition.additions/total_additions)*100))
 
         yearly_language_stats.append(yearly_language_stat)
+
+    for yearly_language_stat in yearly_language_stats:
+        yearly_language_stat.language_stats.sort(key=lambda x: x.percentage, reverse=True)
 
     return yearly_language_stats
 
