@@ -1,15 +1,10 @@
 # Todo:
-# finish updating lists
 # rename filename_to_language_map to file_extension
 # split into files
 # unit tests
 # instructions in readme
 
 # Done:
-# updated filename to language map to dictionary
-# added ignore list and updated file extensions supported
-# order the output in descending order
-# gets private repos
 
 import argparse
 from datetime import datetime
