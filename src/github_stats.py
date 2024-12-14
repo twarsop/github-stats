@@ -1,8 +1,7 @@
 # Todo:
-# rename filename_to_language_map to file_extension
-# split into files: get github commits (datetime, filename, additions) -> map fileame to language (datetime, language, additions) -> aggregate (year, total additions, [language, additions, percentageß])
 # config in file
-# unit tests
+# unit tests local
+# run unit tests in github
 # instructions in readme
 
 # Done:

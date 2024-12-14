@@ -1,19 +1,19 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
 
-filename_to_language_map = dict()
-filename_to_language_map["cs"] = "C#"
-filename_to_language_map["cshtml"] = "CSHTML"
-filename_to_language_map["css"] = "CSS"
-filename_to_language_map["Dockerfile"] = "Dockerfile"
-filename_to_language_map["html"] = "HTML"
-filename_to_language_map["ipynb"] = "Jupyter Notebook"
-filename_to_language_map["js"] = "JS"
-filename_to_language_map["Makefile"] = "Makefile"
-filename_to_language_map["md"] = "Markdown"
-filename_to_language_map["py"] = "Python"
-filename_to_language_map["sql"] = "SQL"
-filename_to_language_map["yml"] = "YML"
+file_extension_to_language_map = dict()
+file_extension_to_language_map["cs"] = "C#"
+file_extension_to_language_map["cshtml"] = "CSHTML"
+file_extension_to_language_map["css"] = "CSS"
+file_extension_to_language_map["Dockerfile"] = "Dockerfile"
+file_extension_to_language_map["html"] = "HTML"
+file_extension_to_language_map["ipynb"] = "Jupyter Notebook"
+file_extension_to_language_map["js"] = "JS"
+file_extension_to_language_map["Makefile"] = "Makefile"
+file_extension_to_language_map["md"] = "Markdown"
+file_extension_to_language_map["py"] = "Python"
+file_extension_to_language_map["sql"] = "SQL"
+file_extension_to_language_map["yml"] = "YML"
 
 file_extensions_to_ignore = [
     "0/apphost",
@@ -127,7 +127,7 @@ def map_filename_to_language(commit_filenames):
 
         if split_filename[-1] not in file_extensions_to_ignore:
             filename_to_language_match = None
-            for filename, language in filename_to_language_map.items():
+            for filename, language in file_extension_to_language_map.items():
                 if split_filename[-1] == filename:
                     filename_to_language_match = language
             
