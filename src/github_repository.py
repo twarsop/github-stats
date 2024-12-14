@@ -7,13 +7,13 @@ HEADERS = {"Authorization": f"token {os.environ['token']}"}
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 @dataclass
-class CommitFile:
+class CommitFilename:
     datetime: datetime
     filename: str
     additions: int
 
-def get_commit_files(github_username, commits_since_date, commits_until_date):
-    commit_files = []
+def get_commit_filenames(github_username, commits_since_date, commits_until_date):
+    commit_filenames = []
     
     repositories_json = get_github_json(f"search/repositories?q=user:{github_username}", github_username)
 
@@ -25,9 +25,9 @@ def get_commit_files(github_username, commits_since_date, commits_until_date):
                     commit_json = get_github_json(f"repos/{github_username}/{repo['name']}/commits/{commit['sha']}", github_username)
                     if commit_json:
                         for file in commit_json["files"]:
-                            commit_files.append(CommitFile(datetime=datetime.strptime(commit["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ'), filename=file["filename"], additions=file["additions"]))
+                            commit_filenames.append(CommitFilename(datetime=datetime.strptime(commit["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ'), filename=file["filename"], additions=file["additions"]))
 
-    return commit_files
+    return commit_filenames
     
 def get_github_json(endpoint, github_username):
     url = f"{GITHUB_API_BASE_URL}/{endpoint}"

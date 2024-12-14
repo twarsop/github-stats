@@ -119,11 +119,11 @@ class CommitLanguage:
     language: str
     additions: int
 
-def map_filename_to_language(commit_files):
+def map_filename_to_language(commit_filenames):
     commit_languages = []
 
-    for commit_file in commit_files:
-        split_filename = commit_file.filename.split(".")
+    for commit_filename in commit_filenames:
+        split_filename = commit_filename.filename.split(".")
 
         if split_filename[-1] not in file_extensions_to_ignore:
             filename_to_language_match = None
@@ -132,9 +132,9 @@ def map_filename_to_language(commit_files):
                     filename_to_language_match = language
             
             if filename_to_language_match is None:
-                print(f"Encountered unknown file extension: {split_filename[-1]} in filename: {commit_file.filename}")
+                print(f"Encountered unknown file extension: {split_filename[-1]} in filename: {commit_filename.filename}")
 
             if filename_to_language_match:
-                commit_languages.append(CommitLanguage(commit_file.datetime, filename_to_language_match, commit_file.additions))
+                commit_languages.append(CommitLanguage(commit_filename.datetime, filename_to_language_match, commit_filename.additions))
 
     return commit_languages

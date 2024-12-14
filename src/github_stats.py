@@ -9,7 +9,7 @@
 
 from aggregate import aggregate_language_stats_by_year
 import argparse
-from github_repository import get_commit_files
+from github_repository import get_commit_filenames
 from map import map_filename_to_language
 import json
 from pydantic.json import pydantic_encoder
@@ -21,9 +21,9 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--commits_until_date", type=str, required=True)
     args = parser.parse_args()
 
-    commit_files = get_commit_files(args.github_username, args.commits_since_date, args.commits_until_date)
+    commit_filenames = get_commit_filenames(args.github_username, args.commits_since_date, args.commits_until_date)
 
-    commit_languages = map_filename_to_language(commit_files)
+    commit_languages = map_filename_to_language(commit_filenames)
 
     yearly_language_stats = aggregate_language_stats_by_year(commit_languages)
 
