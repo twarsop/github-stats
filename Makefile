@@ -3,7 +3,7 @@ include .env
 $(eval export $(shell sed -ne 's/ *#.*$$//; /./ s/=.*$$// p' .env))
 
 run:
-	python src/github-stats.py -u twarsop -s 2024-01-01 -t 2025-01-01
+	python src/github_stats.py -u twarsop -s 2024-01-01 -t 2025-01-01
 
 env: env.sh.enc
 	gpg --decrypt < env.sh.enc > .env
