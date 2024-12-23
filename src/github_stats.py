@@ -1,5 +1,4 @@
 # Todo:
-# unit tests local
 # run unit tests in github
 # instructions in readme
 
