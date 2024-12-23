@@ -3,7 +3,7 @@ import os
 from pydantic.dataclasses import dataclass
 import requests
 
-HEADERS = {"Authorization": f"token {os.environ['token']}"}
+HEADERS = None if "token" not in os.environ else {"Authorization": f"token {os.environ['token']}"}
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 @dataclass
