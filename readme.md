@@ -1,5 +1,7 @@
 # github-stats
 
+![example workflow](https://github.com/twarsop/github-stats/blob/main/.github/workflows/python-app.yml/badge.svg)
+
 ## Run Locally
 
 If don't have `pipenv`:
