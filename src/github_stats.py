@@ -1,7 +1,3 @@
-# Todo:
-# run unit tests in github
-# instructions in readme
-
 from aggregate import aggregate_language_stats_by_year
 import argparse
 from github_repository import get_commit_filenames
