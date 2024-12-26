@@ -22,31 +22,7 @@ A python script for calculating the percentage of additions you make to your git
                 "additions": 257,
                 "percentage": 11.164205039096437
             },
-            {
-                "language": "Python",
-                "additions": 161,
-                "percentage": 6.993918331885316
-            },
-            {
-                "language": "HTML",
-                "additions": 155,
-                "percentage": 6.733275412684622
-            },
-            {
-                "language": "Markdown",
-                "additions": 119,
-                "percentage": 5.169417897480452
-            },
-            {
-                "language": "Dockerfile",
-                "additions": 21,
-                "percentage": 0.9122502172024326
-            },
-            {
-                "language": "CSS",
-                "additions": 15,
-                "percentage": 0.6516072980017376
-            }
+            ....
         ]
     },
     {
@@ -63,51 +39,7 @@ A python script for calculating the percentage of additions you make to your git
                 "additions": 129517,
                 "percentage": 32.032260537725094
             },
-            {
-                "language": "JS",
-                "additions": 93945,
-                "percentage": 23.234561611345104
-            },
-            {
-                "language": "HTML",
-                "additions": 15504,
-                "percentage": 3.834463177628341
-            },
-            {
-                "language": "C#",
-                "additions": 628,
-                "percentage": 0.1553175229328301
-            },
-            {
-                "language": "CSHTML",
-                "additions": 600,
-                "percentage": 0.14839253783391412
-            },
-            {
-                "language": "Markdown",
-                "additions": 244,
-                "percentage": 0.06034629871912508
-            },
-            {
-                "language": "SQL",
-                "additions": 62,
-                "percentage": 0.015333895576171127
-            },
-            {
-                "language": "YML",
-                "additions": 40,
-                "percentage": 0.009892835855594275
-            },
-            {
-                "language": "Makefile",
-                "additions": 28,
-                "percentage": 0.006924985098915993
-            },
-            {
-                "language": "Dockerfile",
-                "additions": 22,
-                "percentage": 0.005441059720576851
-            }
+            ....
         ]
     }
 ]
