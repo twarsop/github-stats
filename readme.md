@@ -1,6 +1,6 @@
 # github-stats
 
-[![Python application](https://github.com/twarsop/github-stats/actions/workflows/python-app.yml/badge.svg)](https://github.com/twarsop/github-stats/actions/workflows/python-app.yml)
+[![Unit Tests](https://github.com/twarsop/github-stats/actions/workflows/python-app.yml/badge.svg)](https://github.com/twarsop/github-stats/actions/workflows/python-app.yml)
 
 ## Run Locally
 
