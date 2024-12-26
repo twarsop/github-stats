@@ -68,7 +68,7 @@ The main entry point for the code is the `src/github_stats.py` script which has 
 2. `commits_since_date`
 3. `commits_until_date`
 
-There is include in the root of this repo a `Makefile` which contains a `run` receipe that will: set the env variable from `.env` and execute `src/github_stats.py` with the arguments predfined. But if you are using this `Makefile` from this repo you will need to update the arguments provided to the script as it will currently have my arguments.
+There is included in the root of this repo a `Makefile` which contains a `run` receipe that will: set the env variable from `.env` and execute `src/github_stats.py` with the arguments predfined. But if you are using this `Makefile` from this repo you will need to update the arguments provided to the script as it will currently have my arguments set.
 
 ### `pipenv`
 
