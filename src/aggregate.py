@@ -15,6 +15,11 @@ class YearlyLanguageStats:
     total_additions: int
     language_stats: List[LanguageStats]
 
+@dataclass
+class Stats:
+    all_time_language_stats: List[LanguageStats]
+    yearly_language_stats: List[YearlyLanguageStats]
+
 def aggregate_language_stats_by_year(commit_languages):
     yearly_language_additions = defaultdict(lambda: defaultdict(int))
 
@@ -59,3 +64,9 @@ def aggregate_all_time_language_stats(commit_languages):
     all_time_language_stats.sort(key=lambda x: x.percentage, reverse=True)
 
     return all_time_language_stats
+
+def aggregate_stats(commit_languages):
+    all_time_language_stats = aggregate_all_time_language_stats(commit_languages)
+    yearly_language_stats = aggregate_language_stats_by_year(commit_languages)
+
+    return Stats(all_time_language_stats=all_time_language_stats, yearly_language_stats=yearly_language_stats)
