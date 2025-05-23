@@ -1,4 +1,4 @@
-from aggregate import aggregate_language_stats_by_year
+from aggregate import aggregate_stats
 import argparse
 from github_repository import get_commit_filenames
 from map import map_filenames_to_languages
@@ -22,12 +22,12 @@ if __name__ == "__main__":
 
         commit_languages = map_filenames_to_languages(commit_filenames, config["file_extensions_to_languages"], config["file_extensions_to_ignore"])
 
-        yearly_language_stats = aggregate_language_stats_by_year(commit_languages)
+        stats = aggregate_stats(commit_languages)
 
         if args.file_output:
             with open(args.file_output, "w") as file:
-                json.dump(yearly_language_stats, file, indent=4, default=pydantic_encoder)
+                json.dump(stats, file, indent=4, default=pydantic_encoder)
         else:
-            print(json.dumps(yearly_language_stats, indent=4, default=pydantic_encoder))
+            print(json.dumps(stats, indent=4, default=pydantic_encoder))
     else:
         print("Failed to load config")
