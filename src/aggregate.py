@@ -44,6 +44,9 @@ def aggregate_language_stats_by_year(commit_languages):
 
         yearly_language_stats.append(YearlyLanguageStats(year, total_additions, language_stats))
 
+    # Sort yearly stats by year
+    yearly_language_stats.sort(key=lambda x: x.year)
+
     return yearly_language_stats
 
 def aggregate_all_time_language_stats(commit_languages):
